@@ -11,7 +11,9 @@
 | 支持目录式 Skills 的 AI 助手 | [skills/literature-to-presentation/](skills/literature-to-presentation/) 整个目录 | 按该助手的方式安装，再按技能名称调用 |
 | 能读附件或长文本，但没有 Skills 功能 | [跨模型指令](portable/literature-to-presentation.md) 一个文件 | 下载并上传给模型；不能上传时复制全文，然后发送任务 |
 
-两种形式来自同一套规则。目录版支持按需读取参考章节；单文件版已经包含全部参考规则，不需要再访问本仓库，但一次输入的内容更多。能按需读文件时优先使用目录版。普通使用者无需运行打包脚本或安装 Python。
+两种形式来自同一套规则。目录版支持按需读取参考章节；单文件版已经包含全部参考规则，不需要再访问本仓库，但一次输入的内容更多。能按需读文件时优先使用目录版。只使用指令无需安装 Python；运行下方的可选工具需要 Python。
+
+完整技能目录现在附带本项目编写的页面组件、HTML/PPTX 导出、讲稿同步、PDF 提取与基础检查工具。单文件指令包含使用说明，但不包含这些程序；要运行工具，请下载完整目录。
 
 ### 用法一：安装完整 Skill
 
@@ -21,7 +23,7 @@
 
 ```text
 请将 skills/literature-to-presentation 安装为当前环境可调用的技能。
-保留 references 和 agents 等文件夹，检查是否完整，避免重复安装同名版本。
+保留 references、scripts、assets、examples、tests 和 agents 等文件夹及许可文件，检查是否完整，避免重复安装同名版本。
 然后告诉我怎样调用。
 ```
 
@@ -62,6 +64,25 @@
 
 它的价值是让研究和制作标准可以重复调用，而非每次只要求“帮我做个 PPT”。模型仍可能漏做步骤，因此需要核查实际结果；目前没有跨模型对照数据证明固定幅度的准确率或 token 改善。
 
+## 直接生成文件：可选工具
+
+在仓库根目录运行以下示例。HTML、左右对照讲稿、Markdown 讲稿和来源记录仅依赖 Python 3.9+ 标准库：
+
+```sh
+python3 skills/literature-to-presentation/scripts/build_presentation.py skills/literature-to-presentation/examples/demo.json --out dist/demo
+```
+
+打开 `dist/demo/index.html` 即可查看六种基础版式。示例材料完全虚构，没有附带研究书籍或论文内容。
+
+生成可编辑 PPTX 时安装开源依赖，再增加 `--pptx`：
+
+```sh
+python3 -m pip install -r skills/literature-to-presentation/scripts/requirements-pptx.txt
+python3 skills/literature-to-presentation/scripts/build_presentation.py skills/literature-to-presentation/examples/demo.json --out dist/demo --pptx
+```
+
+页面与讲稿使用同一份 JSON，PPTX 使用原生文本框和表格。数据格式、PDF/OCR、浏览器检查与依赖安装见[工具用法](skills/literature-to-presentation/references/toolkit.md)。基础版式可修改，不是原报告所有复杂页面的完整复刻。
+
 ## 什么可以迁移，什么取决于工具？
 
 **迁移的是工作方法与完成标准。执行工具可以替换，完成情况必须如实说明。**
@@ -76,7 +97,7 @@
 
 例如，模型没有联网能力，但用户提供了完整论文，仍可据此分析；没有 PPTX 工具时，可以完成内容和讲稿，但不能声称已经生成 PPTX。用户需要的格式不能未经说明就被替换。
 
-原项目确实用过系统提供的演示 skill、PDF/OCR 工具、浏览器及专用导出库。这些没有包含在本仓库；具体清单见[原项目的工具与迁移边界](docs/workflow-review.md#原项目的工具与迁移边界)。它们是当时的实现方式，不是执行本方法的固定前置依赖。
+原项目确实用过系统提供的演示 skill 和专有导出库，具体清单见[原项目的工具与迁移边界](docs/workflow-review.md#原项目的工具与迁移边界)。这些受限工具没有被搬进仓库；随附 PPTX 工具已基于 python-pptx 重新实现。PDF、OCR 和浏览器检查同样通过独立编写的脚本调用外部开源工具，第三方软件本体不随包分发。
 
 ## 先用一个小例子试试
 
@@ -105,12 +126,15 @@
 
 ## 验证与维护
 
-已完成技能格式、链接和小型案例检查，覆盖命题强度、关联内容同步、视觉关系及按章节读取。另以单文件指令完成了一次仅文本输出的模拟测试，产出了完整 HTML 源码与讲稿，并明确未生成附件、未验证渲染。**这些测试仍在现有模型环境中进行，尚未完成多种模型、客户端和操作系统的系统性实测。**测试记录见[工作流程复盘](docs/workflow-review.md)。
+可执行工具已用六页虚构示例验证 HTML、讲稿和可编辑 PPTX；浏览器溢出与脚本错误检查通过，并复测了错误矩阵、导航冲突和过长正文。PDF 已验证原生文字提取，真实 OCR 与原生 PowerPoint 视觉渲染尚未验证。工具测试可在仓库根目录运行 `python3 -m unittest discover -s skills/literature-to-presentation/tests -v`；可选依赖缺失的项目会明确跳过。
+
+工作流另已完成技能格式、链接和小型案例检查，覆盖命题强度、关联内容同步、视觉关系及按章节读取。另以单文件指令完成了一次仅文本输出的模拟测试，产出了完整 HTML 源码与讲稿，并明确未生成附件、未验证渲染。**这些测试仍在现有模型环境中进行，尚未完成多种模型、客户端和操作系统的系统性实测。**测试记录见[工作流程复盘](docs/workflow-review.md)。
 
 ```text
-skills/literature-to-presentation/   # 唯一的规则源，供 Skills 环境使用
+skills/literature-to-presentation/   # 规则源与可选工具，供 Skills 环境使用
 portable/literature-to-presentation.md  # 自动合并版，供其他模型使用
 scripts/package_skill.py            # 维护者生成、校验和打包工具
+LICENSE                             # 本项目原创内容的 MIT 许可证
 README.md                           # 使用与分享说明
 docs/workflow-review.md             # 复盘、测试范围与原项目依赖
 ```
@@ -123,4 +147,10 @@ python3 scripts/package_skill.py --check
 python3 scripts/package_skill.py --zip dist/literature-to-presentation-kit.zip
 ```
 
-第一条更新合并版，第二条检查它与规则源是否一致，第三条生成含 README、两种入口和复盘文档的分享包。`--check` 只检查文件同步，不等于验证模型会正确执行工作流。
+第一条更新合并版，第二条检查它与规则源是否一致，第三条生成含 README、两种入口、可选工具、示例、测试、许可证和复盘文档的分享包。`--check` 只检查文件同步，不等于验证模型会正确执行工作流。
+
+## 许可证
+
+除另有说明外，本项目原创代码、文档、组件和虚构示例采用 [MIT 许可证](LICENSE)。允许按该许可证使用、修改和再分发，需保留许可与版权声明。
+
+可选外部依赖继续适用各自许可证，详见[第三方说明](skills/literature-to-presentation/THIRD_PARTY_NOTICES.md)。本项目不授予用户研究材料、第三方图片或字体的额外权利。使用第三方工具的名称与链接只说明依赖，不代表相关机构背书。
