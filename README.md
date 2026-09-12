@@ -1,9 +1,81 @@
-# Skills
+# Codex 技能库
 
-可复用的 Codex 技能。
+将文献阅读、证据核查和演示制作中反复使用的方法整理为可复用的 Codex skill。仓库保存工作方法与必要的参考规则，不存放研究用书籍全文、论文缓存或个人项目成果。
 
-| Skill | 用途 |
-|---|---|
-| [literature-to-presentation](skills/literature-to-presentation/SKILL.md) | 从学术书籍和论文到有原文依据的演示、具体讲稿和符合论证关系的可视化。 |
+## 现有技能
 
-将对应 skill 文件夹放入当前环境的技能目录后，可用 `$literature-to-presentation` 调用。仓库不包含研究用书籍全文、受限论文或个人工作区资料。
+| 技能 | 适用任务 | 入口 |
+|---|---|---|
+| `literature-to-presentation` | 将学术书籍、论文整理为课程或研讨会报告；修订已有演示、讲稿、理论比较与历史案例 | [SKILL.md](skills/literature-to-presentation/SKILL.md) |
+
+这份 skill 重点解决三个问题：表述是否忠实于原文，讲述是否形成完整论证，页面组件是否准确表达论证关系。它也规定小范围修改应当重查哪些内容，避免每次调整都重新阅读全部材料或生成全部格式。
+
+## 安装与调用
+
+本仓库为私有仓库，需要拥有访问权限的 GitHub 账户。可使用已安装的 `skill-installer`，输入：
+
+```text
+使用 $skill-installer，从 https://github.com/leoyao0701/skills
+安装 skills/literature-to-presentation。
+```
+
+也可以将仓库中的整个 `skills/literature-to-presentation/` 文件夹放入当前环境的技能目录，保留内部结构。Codex 通常使用 `$CODEX_HOME/skills`，未设置时通常为 `~/.codex/skills`。已有同名技能时，先比较或备份，再替换。
+
+安装后，在请求中使用 `$literature-to-presentation`，同时提供材料位置、当前文件和本轮目标。
+
+### 从文献新建报告
+
+```text
+使用 $literature-to-presentation，依据这些书籍和论文准备一份中文课程报告。
+目标时长 25 分钟，先确认结构，再制作 HTML 演示和详细讲稿。
+请核查所用版本与引文，区分原作者论证、后续研究和报告者比较。
+```
+
+### 修改已有页面
+
+```text
+使用 $literature-to-presentation，以我提供的当前 HTML 为准，
+检查第 6—8 页的分类与图示是否一致，并同步受影响的讲稿。
+保留其他已确认内容，不增加新的交付格式。
+```
+
+### 全文审查
+
+```text
+使用 $literature-to-presentation，通读当前演示与讲稿，
+核查概念、历史事实、引文、作者判断强度，以及结论的推导过程。
+直接修正有依据的问题，记录无法核实的部分。
+```
+
+## 如何读取仓库
+
+```text
+.
+├── README.md                         # 使用与维护说明
+├── docs/
+│   └── workflow-review.md            # 本次优化的依据、变化和验证范围
+└── skills/
+    └── literature-to-presentation/
+        ├── SKILL.md                  # 任务入口与按需读取规则
+        ├── agents/openai.yaml        # 技能展示信息与默认调用提示
+        └── references/
+            ├── evidence-and-theory.md       # 原文、理论、史实与翻译
+            ├── presentation-and-visuals.md  # 页面关系、图片与具体讲稿
+            └── incremental-workflow.md      # 修改范围、同步、验收与停止条件
+```
+
+`SKILL.md` 是唯一入口。新建、补充内容、视觉调整和全文审查分别读取相关章节，不要求每次加载全部参考文件。`docs/` 面向维护者，不属于每次执行的默认上下文。
+
+## 输出与边界
+
+- 根据请求提供 HTML、PPTX、讲稿或来源记录，不自动生成所有格式。
+- 原文、释义和讲者分析分别处理；保留作者的“可能”“必要”“必然”等判断强度。书评用于建立争论入口，不能替代未读的原作。
+- 页面、讲稿和来源围绕同一内容定稿更新；历史版本留在项目工作区，不反向覆盖新修订。
+- 原始材料不可访问时，收窄或注明判断范围。最终文件的检查结果只覆盖实际使用过的环境。
+- 报告语言、时长、页数、左右布局、英文首现和引注形式由用户决定，不固化为所有报告的统一模板。
+
+## 维护方式
+
+先记录实际反复出现的问题，再修改能改变行为的规则。入口保留最少决策信息，细节放入对应参考文件；只有存在稳定、重复的操作时才增加脚本。提交前检查内部链接、技能格式及受影响的行为案例。
+
+本次整理合并了重复的验收与记录说明，加入增量修改范围和停止条件。具体问题、读取体积变化与测试限制见[工作流程复盘](docs/workflow-review.md)。
