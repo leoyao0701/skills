@@ -1,0 +1,4 @@
+interface:
+  display_name: "文献研读与学术演示"
+  short_description: "从原文核查与理论对话到完整讲稿、演示制作和逻辑可视化复核"
+  default_prompt: "使用 $literature-to-presentation 将这些书籍与论文整理为有准确原文依据、论证清楚的学术演示，并按我的要求准备讲稿。"
